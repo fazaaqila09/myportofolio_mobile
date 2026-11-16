@@ -7,10 +7,12 @@ class MyHomePage extends StatelessWidget {
   final String nama = "Muhammad Faza Aqila";
   final String kelas = "PBP C";
 
+  // Tombol aksi beserta warnanya. Shade 700 dipilih supaya teks dan ikon
+  // putih di atasnya tetap terbaca (kontras cukup tinggi).
   final List<ItemHomepage> items = [
-    ItemHomepage("Lihat Proyek", Icons.folder),
-    ItemHomepage("Tambah Proyek", Icons.add_circle),
-    ItemHomepage("Logout", Icons.logout),
+    ItemHomepage("Lihat Experience", Icons.work, Colors.blue.shade700),
+    ItemHomepage("Tambah Experience", Icons.add_circle, Colors.green.shade700),
+    ItemHomepage("Logout", Icons.logout, Colors.red.shade700),
   ];
 
   @override
@@ -116,11 +118,16 @@ class InfoCard extends StatelessWidget {
   }
 }
 
+/// Model data untuk satu tombol aksi di halaman utama.
+///
+/// Warna latar disimpan di model, sehingga [ItemCard] cukup membaca
+/// `item.color` tanpa percabangan if-else per tombol.
 class ItemHomepage {
   final String name;
   final IconData icon;
+  final Color color;
 
-  ItemHomepage(this.name, this.icon);
+  ItemHomepage(this.name, this.icon, this.color);
 }
 
 class ItemCard extends StatelessWidget {
@@ -131,8 +138,8 @@ class ItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      // Menggunakan warna sekunder dari skema tema aplikasi.
-      color: Theme.of(context).colorScheme.secondary,
+      // Warna latar diambil dari model, jadi tiap tombol punya warnanya sendiri.
+      color: item.color,
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
         // Aksi ketika kartu ditekan oleh pengguna.
