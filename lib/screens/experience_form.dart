@@ -33,7 +33,8 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
   final _formKey = GlobalKey<FormState>();
 
   // Kategori terpilih; default 'full-time' sama seperti di model Django.
-  String _category = 'full-time';
+  static const String _defaultCategory = 'full-time';
+  String _category = _defaultCategory;
 
   // Tanggal disimpan sebagai DateTime; null berarti belum dipilih.
   // Tanggal selesai yang kosong berarti kegiatan masih berlangsung.
@@ -163,11 +164,100 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
     });
   }
 
+  /// Tanggal yang mudah dibaca untuk dialog ringkasan, misalnya "5 Maret 2026".
+  static String _formatReadableDate(DateTime date) {
+    const months = [
+      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
+    ];
+    return '${date.day} ${months[date.month - 1]} ${date.year}';
+  }
+
   /// Mengosongkan tanggal selesai (kembali ke status "masih berlangsung").
   void _clearEndDate() {
     setState(() {
       _endDate = null;
       _endDateController.clear();
+    });
+  }
+
+  // Simpan & dialog
+
+  /// Dipanggil tombol Simpan. validate() menjalankan semua validator; dialog
+  /// ringkasan hanya muncul jika seluruh isian valid. Jika ada yang tidak
+  /// valid, pesan error otomatis tampil di bawah field terkait.
+  void _submit() {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Experience berhasil ditambahkan!'),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _summaryRow('Nama', _titleController.text),
+                _summaryRow('Peran', _roleController.text),
+                _summaryRow('Deskripsi', _descriptionController.text),
+                _summaryRow('Kategori', _categories[_category] ?? _category),
+                _summaryRow('URL Foto', _thumbnailController.text),
+                _summaryRow('Mulai', _formatReadableDate(_startDate!)),
+                _summaryRow(
+                  'Selesai',
+                  _endDate == null
+                      ? 'Masih berlangsung'
+                      : _formatReadableDate(_endDate!),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.pop(dialogContext);
+                _resetForm();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Satu baris ringkasan "Label: nilai"; isian opsional yang kosong
+  /// ditampilkan sebagai "-".
+  Widget _summaryRow(String label, String value) {
+    final text = value.trim();
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6.0),
+      child: Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(
+              text: '$label: ',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            TextSpan(text: text.isEmpty ? '-' : text),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Mengosongkan form setelah dialog ditutup, seperti project_form.dart.
+  /// reset() mengosongkan semua field (termasuk teks di controller), sedangkan
+  /// tanggal dan kategori yang disimpan di state dikembalikan secara manual.
+  void _resetForm() {
+    _formKey.currentState!.reset();
+    setState(() {
+      _category = _defaultCategory;
+      _startDate = null;
+      _endDate = null;
     });
   }
 
@@ -343,6 +433,26 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
                         tooltip: 'Kosongkan tanggal selesai',
                         onPressed: _clearEndDate,
                       ),
+              ),
+
+              // === Tombol Simpan ===
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.all(
+                        Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                    onPressed: _submit,
+                    child: const Text(
+                      'Simpan',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
