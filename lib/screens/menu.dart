@@ -5,6 +5,9 @@ import 'package:myportofolio_mobile/widgets/project_card.dart';
 class MyHomePage extends StatelessWidget {
   MyHomePage({super.key});
 
+  // Lebar maksimum isi halaman, agar tampilan tetap rapi di jendela lebar.
+  static const double _maxContentWidth = 480;
+
   final String npm = "2506613142";
   final String nama = "Muhammad Faza Aqila";
   final String kelas = "PBP C";
@@ -37,56 +40,60 @@ class MyHomePage extends StatelessWidget {
       ),
       // Drawer berisi navigasi ke halaman lain.
       drawer: const LeftDrawer(),
-      // Body halaman utama dengan padding di sekelilingnya.
-      body: Padding(
+      // Body bisa digulir agar isi halaman tidak meluap di layar pendek, dan
+      // lebarnya dibatasi agar kartu tidak membesar berlebihan di layar lebar.
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Baris horizontal untuk menampilkan 3 InfoCard secara sejajar.
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: _maxContentWidth),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                InfoCard(title: 'NPM', content: npm),
-                InfoCard(title: 'Name', content: nama),
-                InfoCard(title: 'Class', content: kelas),
-              ],
-            ),
+                // Baris horizontal untuk menampilkan 3 InfoCard secara sejajar.
+                // Expanded membagi lebar baris sama rata sehingga tidak meluap.
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(child: InfoCard(title: 'NPM', content: npm)),
+                    Expanded(child: InfoCard(title: 'Name', content: nama)),
+                    Expanded(child: InfoCard(title: 'Class', content: kelas)),
+                  ],
+                ),
 
-            const SizedBox(height: 16.0),
+                const SizedBox(height: 16.0),
 
-            // Bagian tengah: pesan sambutan dan kisi tombol menu portofolio.
-            Center(
-              child: Column(
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(top: 16.0),
-                    child: Text(
-                      'Selamat datang di MyPortfolio Mobile!',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18.0,
-                      ),
+                // Pesan sambutan.
+                const Padding(
+                  padding: EdgeInsets.only(top: 16.0),
+                  child: Text(
+                    'Selamat datang di MyPortfolio Mobile!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18.0,
                     ),
                   ),
+                ),
 
-                  // GridView menampilkan kartu tombol dalam tata letak kisi 3 kolom.
-                  GridView.count(
-                    primary: true,
-                    padding: const EdgeInsets.all(20),
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    crossAxisCount: 3,
-                    // shrinkWrap agar ukuran kisi menyesuaikan tinggi konten anak.
-                    shrinkWrap: true,
-                    children: items.map((ItemHomepage item) {
-                      return ItemCard(item);
-                    }).toList(),
-                  ),
-                ],
-              ),
+                // GridView menampilkan 4 kartu tombol dalam kisi 2 x 2.
+                GridView.count(
+                  // Yang digulir adalah halaman, bukan kisinya.
+                  primary: false,
+                  physics: const NeverScrollableScrollPhysics(),
+                  padding: const EdgeInsets.all(20),
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  crossAxisCount: 2,
+                  // shrinkWrap agar ukuran kisi menyesuaikan tinggi konten anak.
+                  shrinkWrap: true,
+                  children: items.map((ItemHomepage item) {
+                    return ItemCard(item);
+                  }).toList(),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -106,9 +113,9 @@ class InfoCard extends StatelessWidget {
       // Memberikan efek bayangan kartu elevasi 2 unit.
       elevation: 2.0,
       child: Container(
-        // Menyesuaikan lebar kartu dengan proporsi layar (dibagi 3.5).
-        width: MediaQuery.of(context).size.width / 3.5,
-        padding: const EdgeInsets.all(16.0),
+        // Lebar kartu mengikuti Expanded dari Row di MyHomePage.
+        width: double.infinity,
+        padding: const EdgeInsets.all(12.0),
         // Menyusun teks title dan content secara vertikal.
         child: Column(
           children: [
@@ -117,7 +124,7 @@ class InfoCard extends StatelessWidget {
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8.0),
-            Text(content),
+            Text(content, textAlign: TextAlign.center),
           ],
         ),
       ),
