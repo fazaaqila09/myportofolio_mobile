@@ -99,7 +99,8 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
       return null;
     }
     final uri = Uri.tryParse(text);
-    final isWebUrl = uri != null &&
+    final isWebUrl =
+        uri != null &&
         (uri.scheme == 'http' || uri.scheme == 'https') &&
         uri.host.isNotEmpty;
     if (!isWebUrl) {
@@ -167,8 +168,18 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
   /// Tanggal yang mudah dibaca untuk dialog ringkasan, misalnya "5 Maret 2026".
   static String _formatReadableDate(DateTime date) {
     const months = [
-      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
+      'Januari',
+      'Februari',
+      'Maret',
+      'April',
+      'Mei',
+      'Juni',
+      'Juli',
+      'Agustus',
+      'September',
+      'Oktober',
+      'November',
+      'Desember',
     ];
     return '${date.day} ${months[date.month - 1]} ${date.year}';
   }
@@ -281,9 +292,7 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
         decoration: InputDecoration(
           hintText: hint,
           labelText: label,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5.0),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
         ),
         validator: validator,
       ),
@@ -310,9 +319,7 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
           labelText: label,
           prefixIcon: const Icon(Icons.calendar_today),
           suffixIcon: suffixIcon,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5.0),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
         ),
         validator: validator,
       ),
@@ -326,10 +333,7 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
       appBar: AppBar(
         title: const Text(
           'Add Experience Form',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Theme.of(context).colorScheme.primary,
         // Ikon drawer (dan tombol kembali) berwarna putih agar terlihat.
@@ -388,10 +392,12 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
                   ),
                   initialValue: _category,
                   items: _categories.entries
-                      .map((entry) => DropdownMenuItem(
-                            value: entry.key,
-                            child: Text(entry.value),
-                          ))
+                      .map(
+                        (entry) => DropdownMenuItem(
+                          value: entry.key,
+                          child: Text(entry.value),
+                        ),
+                      )
                       .toList(),
                   onChanged: (String? newValue) {
                     setState(() {
