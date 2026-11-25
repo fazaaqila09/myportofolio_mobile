@@ -17,6 +17,7 @@ class MyHomePage extends StatelessWidget {
   final List<ItemHomepage> items = [
     ItemHomepage("Lihat Experience", Icons.work, Colors.blue.shade700),
     ItemHomepage("Tambah Experience", Icons.add_circle, Colors.green.shade700),
+    ItemHomepage("Lihat Proyek", Icons.folder, Colors.teal.shade700),
     ItemHomepage("Tambah Proyek", Icons.add_box, Colors.purple.shade700),
     ItemHomepage("Logout", Icons.logout, Colors.red.shade700),
   ];
@@ -29,10 +30,7 @@ class MyHomePage extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'MyPortfolio',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Theme.of(context).colorScheme.primary,
         // Ikon menu (hamburger) drawer dibuat putih agar terlihat di atas AppBar.
@@ -55,9 +53,15 @@ class MyHomePage extends StatelessWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(child: InfoCard(title: 'NPM', content: npm)),
-                    Expanded(child: InfoCard(title: 'Name', content: nama)),
-                    Expanded(child: InfoCard(title: 'Class', content: kelas)),
+                    Expanded(
+                      child: InfoCard(title: 'NPM', content: npm),
+                    ),
+                    Expanded(
+                      child: InfoCard(title: 'Name', content: nama),
+                    ),
+                    Expanded(
+                      child: InfoCard(title: 'Class', content: kelas),
+                    ),
                   ],
                 ),
 
@@ -76,7 +80,7 @@ class MyHomePage extends StatelessWidget {
                   ),
                 ),
 
-                // GridView menampilkan 4 kartu tombol dalam kisi 2 x 2.
+                // GridView menampilkan kartu tombol dalam kisi 2 kolom.
                 GridView.count(
                   // Yang digulir adalah halaman, bukan kisinya.
                   primary: false,
@@ -119,10 +123,7 @@ class InfoCard extends StatelessWidget {
         // Menyusun teks title dan content secara vertikal.
         child: Column(
           children: [
-            Text(
-              title,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
+            Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8.0),
             Text(content, textAlign: TextAlign.center),
           ],
